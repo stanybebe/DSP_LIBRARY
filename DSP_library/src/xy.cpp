@@ -56,8 +56,8 @@ void xy::draw(int xPosIn, int baseIn){
             
          
             
-            cout << "printing"<<endl;
-            cout << valueX  << "xpos" <<endl;
+//            cout << "printing"<<endl;
+//            cout << valueX  << "xpos" <<endl;
    
            
             }
@@ -83,8 +83,8 @@ void xy::draw(int xPosIn, int baseIn){
     
    
     
-    cout << posX <<endl;
-    cout << posY <<endl;
+//    cout << posX <<endl;
+//    cout << posY <<endl;
     ofPopMatrix();
     
     

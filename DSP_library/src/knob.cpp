@@ -57,8 +57,8 @@ void knob::draw(int xPosIn, int baseIn, float range , float rangeMin){
             value = (ofMap(mP, 0, 360, rangeMin, range));
             
             
-            cout << "printing"<<endl;
-            cout << value <<endl;
+//            cout << "printing"<<endl;
+//            cout << value <<endl;
                 c1=10;
            
             }}

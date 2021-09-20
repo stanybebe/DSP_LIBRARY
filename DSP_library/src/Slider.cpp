@@ -49,8 +49,8 @@ void Slider::draw(){
         if(c1<0){
         value--;
         ofGetMousePressed()==false;
-        cout << "printing"<<endl;
-        cout << value <<endl;
+//        cout << "printing"<<endl;
+//        cout << value <<endl;
         c1=10;
         }
         }
@@ -62,8 +62,8 @@ void Slider::draw(){
     if(dist2<=radiusP){
         if(c1<0){
         value++;
-        cout << "printing"<<endl;
-        cout << value <<endl;
+//        cout << "printing"<<endl;
+//        cout << value <<endl;
         c1=10;
         }
         }

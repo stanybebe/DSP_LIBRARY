@@ -49,8 +49,8 @@ void toggle::draw(int xp, int yp){
         if(dist <= radiusP){
             if(c1<0){
             value=!value;
-            cout << "printing"<<endl;
-            cout << value <<endl;
+//            cout << "printing"<<endl;
+//            cout << value <<endl;
             c1 = 10;
            
             }}

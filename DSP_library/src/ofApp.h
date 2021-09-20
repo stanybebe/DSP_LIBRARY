@@ -17,6 +17,7 @@
 
 
 
+
 class ofApp : public ofBaseApp, public ofxMidiListener  {
 
 	public:
@@ -50,8 +51,8 @@ class ofApp : public ofBaseApp, public ofxMidiListener  {
     oscillator oscC[numOsc];
     oscillator oscD[numOsc];
    
-    vector<int> voices {0,0,0,0};
-    vector<int> pitches;
+
+    vector <int> queueDaddy;
     oscillator autoPan;
     oscillator vib;
     oscillator vib2;

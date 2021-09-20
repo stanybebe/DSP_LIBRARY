@@ -32,14 +32,19 @@ void ofApp::setup(){
     settings.setOutDevice(devices[4]);
     lAudio.assign(bufferSize, 0.0);
     rAudio.assign(bufferSize, 0.0);
-    for (int i =0; i < numOsc; i++){
-        osc[i].setup(440*(i+.5), 0, sampleRate, 1/ (float)(i+1));
-        oscB[i].setup(440*(i+.5), 0, sampleRate, 1/ (float)(i+1));
-        oscC[i].setup(440*(i+.5), 0, sampleRate, 1/ (float)(i+1));
-        oscD[i].setup(440*(i+.5), 0, sampleRate, 1/ (float)(i+1));
-      
-    }
-   
+    
+    osc[0].setup(440, 0, sampleRate, .2);
+    oscB[0].setup(440, 0, sampleRate, .2);
+    oscC[0].setup(440, 0, sampleRate, .2);
+    oscD[0].setup(440, 0, sampleRate, .2);
+//    for (int i =0; i < numOsc; i++){
+//        osc[i].setup(440*(i+.5), 0, sampleRate, 1/ (float)(i+1));
+//        oscB[i].setup(440*(i+.5), 0, sampleRate, 1/ (float)(i+1));
+//        oscC[i].setup(440*(i+.5), 0, sampleRate, 1/ (float)(i+1));
+//        oscD[i].setup(440*(i+.5), 0, sampleRate, 1/ (float)(i+1));
+//
+//    }
+//
     filter = new Biquad(bq_type_lowpass, 0/(float)sampleRate,2,-3);
     smoother = new Biquad(bq_type_lowpass, 5000/(float)sampleRate,1,-3);
     smootherB = new Biquad(bq_type_lowpass, 1000/(float)sampleRate,1,-3);
@@ -76,6 +81,9 @@ void ofApp::setup(){
     knobC.value = .01;
     knobA.value = 100;
     XY.setup(100, 600);
+    for (int i = 0; i < 4; i++){
+   
+    }
 }
 
 //--------------------------------------------------------------
@@ -100,69 +108,68 @@ void ofApp::draw(){
          ADSR->setGate(1);
          ADSR_2->setGate(1);
            cNote = message.pitch;
-//          pitches.push_back(message.pitch);
-//
-//           voices[0]=pitches[0];
-//           voices[1]=pitches[1];
-//           voices[2]=pitches[2];
-//           voices[3]=pitches[3];
            
-           v = v + 1;
-           if (v > 3) v = 0;
-
-           switch (v) {
-             case 0:
-               voices[0] = message.pitch;
-               break;
-             case 1:
-               voices[1] = message.pitch;
-               break;
-             case 2:
-               voices[2] = message.pitch;
-             case 3:
-               voices[3] = message.pitch;
-                                  
-               break;
+           queueDaddy.push_back(message.pitch);
+          
+           if(queueDaddy.size() >= 5){
+                queueDaddy.erase(queueDaddy.begin());
            }
-//
+
        }
        
        if (message.status == MIDI_NOTE_OFF){
            ADSR->setGate(0);
            ADSR_2->setGate(0);
            noteOn = false;
-             vo = vo + 1;
-                      if (vo > 3) vo = 0;
+           std::cout << message.pitch<< "_____PITCH/n";
+           
+           std::cout << "queueDaddy:before \n";
+           for (unsigned int i=0; i<queueDaddy.size() ;i++){
+               
+               cout << queueDaddy[i]<<" ";
+               
+               
+           }
+           std::cout << "new-------------------\n";
+//           std::remove(queueDaddy.begin(),queueDaddy.end(),message.pitch);
+           
+           if ( !queueDaddy.empty()){
+           for (int i = queueDaddy.size()-1; i >= 0 ; i--){
+               cout << queueDaddy.size() << " " << i <<" size/n";
+               if (queueDaddy[i]==message.pitch){
+                  queueDaddy.erase(queueDaddy.begin()+i);
+               }
+               
+           }
+           }
+           
+           std::cout << "queueDaddy:after \n";
+           for (unsigned int i=0; i<queueDaddy.size() ;i++){
+               
+               cout << queueDaddy[i]<<" ";
+               
+               
+           }
+           std::cout << "new-------------------\n";
 
-                      switch (vo) {
-                        case 0:
-                          voices[0] = 0;
-                          break;
-                        case 1:
-                          voices[1] = 0;
-                          break;
-                        case 2:
-                          voices[2] = 0;
-                        case 3:
-                          voices[3] = 0;
-                                             
-                          break;
-                      }
-           //
        }
 
 
      
    }
 
-
     
-    for (unsigned int i=0; i<voices.size();i++){
-    cout << voices[0]<<"note"<<endl;
-    cout << voices[1]<<"note"<<endl;
-    cout << voices[2]<<"note"<<endl;
-    cout << voices[3]<<"note"<<endl;
+
+    std::cout << "queueDaddy: \n";
+    for (unsigned int i=0; i<queueDaddy.size() ;i++){
+        
+        cout << queueDaddy[i]<<" ";
+        
+        
     }
+    std::cout << "new-------------------\n";
+    
+
     ofPushMatrix();
     env1.draw(1,1000,20,500,10,500);
     env2.draw(1,1000,20,500,10,500);
@@ -250,14 +257,35 @@ void ofApp::draw(){
     
     autoPan.setFreq(smootherB->process(knobE.value));
     
-    vib.setFreq(smootherJ->process(XY.valueX+ran));
-    vib.setFreq(smootherK->process(XY.valueY+ran));
+//    vib.setFreq(smootherJ->process(XY.valueX+ran));
+//    vib.setFreq(smootherK->process(XY.valueY+ran));
 //    for (int j = 0; j<voices.size();j++){
-    for (int k = 0; k < numOsc; k++){
+   
+  
+
+    
+   
          
-              
-              osc[k].setFreq(smootherC->process(mtofarray[cNote])*(k+round(knobD.value)));
-              osc[k].setAmp(smootherD->process(knobC.value));
+            if(queueDaddy.size()> 0){
+              osc[0].setFreq(mtofarray[queueDaddy[0]]);
+              osc[0].setAmp(smootherD->process(knobC.value));
+            }
+            
+            if(queueDaddy.size()> 1){
+              oscB[0].setFreq(mtofarray[queueDaddy[1]]);
+              oscB[0].setAmp(smootherD->process(knobC.value));
+            }
+//
+            if(queueDaddy.size()> 2){
+              oscC[0].setFreq(mtofarray[queueDaddy[2]]);
+              oscC[0].setAmp(smootherD->process(knobC.value));
+            }
+
+            if(queueDaddy.size()> 3){
+              oscD[0].setFreq(mtofarray[queueDaddy[3]]);
+              oscD[0].setAmp(smootherD->process(knobC.value));
+            }
+//
 //              oscB[k].setFreq(smootherG->process(mtofarray[voices[1]])*(k+round(knobD.value)));
 //              oscB[k].setAmp(smootherD->process(knobC.value));
 //              oscC[k].setFreq(smootherH->process(mtofarray[voices[2]])*(k+round(knobD.value)));
@@ -265,7 +293,9 @@ void ofApp::draw(){
 //              oscD[k].setFreq(smootherI->process(mtofarray[voices[3]])*(k+round(knobD.value)));
 //              oscD[k].setAmp(smootherD->process(knobC.value));
 //
-         }
+         
+                                                          
+    
     
     
    // padA.draw(100, 540);
@@ -340,10 +370,14 @@ void ofApp::audioOut(ofSoundBuffer & buffer){
       
         d_out1->setTime(smootherG->process(knobA.value));
         float currentS = 0;
-        for(int j = 0; j < numOsc; j++){
-            currentS += (osc[j].getSine()*op1.getSine())*vib.getSine();
+//        for(int j = 0; j < numOsc; j++){
+            currentS +=  osc[0].getSaw()
+                         + oscB[0].getSaw()
+                         + oscC[0].getSaw()
+                         + oscD[0].getSaw();
+//                         * op1.getSine() * vib.getSine();
         
-        }
+//        }
         
        
 
@@ -371,7 +405,7 @@ void ofApp::audioOut(ofSoundBuffer & buffer){
         d_in1->feed(currentS+(dOutSample*.7));
         
        
-        currentPanFrame = pans.pan(currentS + dOutSample, autoPan.getSine()*vib2.getSine());
+        currentPanFrame = pans.pan(currentS + dOutSample, autoPan.getSine());
         
         lAudio[i] =buffer[i*buffer.getNumChannels()+0] = currentPanFrame.leftSamp ;
         rAudio[i] = buffer[i*buffer.getNumChannels()+1] = currentPanFrame.rightSamp ;

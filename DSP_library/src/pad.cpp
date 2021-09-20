@@ -59,8 +59,8 @@ void pad::draw(int xp, int yp){
             if(c1<0){
                 
             value=true;
-            cout << "printing"<<endl;
-            cout << value <<endl;
+//            cout << "printing"<<endl;
+//            cout << value <<endl;
             c1 = 10;
            
         }
