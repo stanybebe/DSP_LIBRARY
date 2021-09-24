@@ -20,15 +20,6 @@
 			<key>requirement</key>
 			<string>cdhash H"322c45871ae05222f15a8131f3aac8fd7d00b68f" or cdhash H"8d83b2a9ada66d497056b99d4168a4eb44ecddd4"</string>
 		</dict>
-		<key>Frameworks/libclang_rt.tsan_osx_dynamic.dylib</key>
-		<dict>
-			<key>cdhash</key>
-			<data>
-			G7770Q2kcsjT/285iHM2NZw/cHQ=
-			</data>
-			<key>requirement</key>
-			<string>cdhash H"1bbefbd10da472c8d3ff6f39887336359c3f7074" or cdhash H"78884e616a935d7c31bccf161d05ffe88c44e96e"</string>
-		</dict>
 		<key>Frameworks/libclang_rt.ubsan_osx_dynamic.dylib</key>
 		<dict>
 			<key>cdhash</key>

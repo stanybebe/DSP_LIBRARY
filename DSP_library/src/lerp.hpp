@@ -1,48 +1,41 @@
 //
-//  lerp.hpp
-//  DSP_library
+//  Interpolation.hpp
+//  libraryBuilding
 //
-//  Created by Mac on 6/25/21.
+//  Created by Aaron Anderson on 7/16/17.
+//
 //
 
-#ifndef lerp_hpp
-#define lerp_hpp
+#ifndef Interpolation_hpp
+#define Interpolation_hpp
 
 #include <stdio.h>
-#include "ofMain.h"
+#include "math.h"
 
-#endif /* lerp_hpp */
-            
-                
-class lerp : public ofBaseApp {
+inline float linearInterp(float x0, float x1, float y0, float y1, float x){
     
+    if (x1 == x0) { return 0; }//avoid divideBy0
+    float scalar = (x - x0) / (x1 - x0);//gather normalized position between two x values
     
+    float result = (y0*scalar) + (y1*(1 - scalar));
     
-public:
-    
-    lerp (float smoothingTime, float sampleRate){
-     a = exp(-TWO_PI)/ (smoothingTime *.001 * sampleRate);
-     b = 1.0 -a;
-     z = 0.0;
-    }
-     
-    inline float process ( float input){
-        z = (input * b) + (z*a);
-        return z;
-        }
-    
+    return result;
+}
 
-    
-    float a;
-    float b;
-    float z;
-    
+//a small form version that assumes x locations are integers and neighbors
+inline float linearInterp(float y0, float y1, float x) {//this version assumes integer x values
+    float scalar = x - (int)x;//how far away are we from y0?
+    return (y0*(1-scalar)) + (y1*(scalar));
+}
+
+//this is considerably more expensive than linear
+inline float cubicInterp(float y0, float y1, float y2, float y3, float xPos){
+    float x = xPos - int(xPos); // how far between points x1 and x2?
+    float a = (-0.5*y0) + (1.5*y1) - (1.5*y2) + (0.5 * y3);
+    float b = (y0) - (2.5*y1) + (2 * y2) - (0.5*y3);
+    float c = (-0.5*y0) + (0.5*y2);
+    float d = y1;
+    return (a*pow(x, 3)) + (b*pow(x, 2)) + (c*x) + d;
 };
 
-struct lerpVal {
-    float targetVal;
-    float currentVal;
-    
-    lerp* lerp_object;
-};
-    
+#endif /* Interpolation_hpp */

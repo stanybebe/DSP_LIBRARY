@@ -4,7 +4,7 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
     midiIn.listInPorts();
-    midiIn.openPort(4);
+    midiIn.openPort(6);
     //midiIn.openPort("IAC Pure Data In");    // by name
     //midiIn.openVirtualPort("ofxMidiIn Input"); // open a virtual port
     
@@ -33,10 +33,10 @@ void ofApp::setup(){
     lAudio.assign(bufferSize, 0.0);
     rAudio.assign(bufferSize, 0.0);
     
-    osc[0].setup(440, 0, sampleRate, .2);
-    oscB[0].setup(440, 0, sampleRate, .2);
-    oscC[0].setup(440, 0, sampleRate, .2);
-    oscD[0].setup(440, 0, sampleRate, .2);
+    osc.setup(440, 0, sampleRate, .02);
+    oscB.setup(440, 0, sampleRate, .02);
+    oscC.setup(440, 0, sampleRate, .02);
+    oscD.setup(440, 0, sampleRate, .02);
 //    for (int i =0; i < numOsc; i++){
 //        osc[i].setup(440*(i+.5), 0, sampleRate, 1/ (float)(i+1));
 //        oscB[i].setup(440*(i+.5), 0, sampleRate, 1/ (float)(i+1));
@@ -46,16 +46,27 @@ void ofApp::setup(){
 //    }
 //
     filter = new Biquad(bq_type_lowpass, 0/(float)sampleRate,2,-3);
-    smoother = new Biquad(bq_type_lowpass, 5000/(float)sampleRate,1,-3);
+    smoother = new Biquad(bq_type_lowpass, 5000/(float)sampleRate,2,-3);
     smootherB = new Biquad(bq_type_lowpass, 1000/(float)sampleRate,1,-3);
-    smootherC = new Biquad(bq_type_lowpass, 10000/(float)sampleRate,2,-3);
+    smootherC = new Biquad(bq_type_lowpass, 10000/(float)sampleRate,1,-3);
     smootherD = new Biquad(bq_type_lowpass, 5000/(float)sampleRate,1,-3);
     smootherF = new Biquad(bq_type_lowpass, 1000/(float)sampleRate,1,-3);
-    smootherG = new Biquad(bq_type_lowpass, 1/(float)sampleRate,2,-3);
+    smootherG = new Biquad(bq_type_lowpass, 1/(float)sampleRate,1,-3);
     smootherH = new Biquad(bq_type_lowpass, 5000/(float)sampleRate,1,-3);
     smootherI = new Biquad(bq_type_lowpass, 5000/(float)sampleRate,1,-3);
     smootherJ = new Biquad(bq_type_lowpass, 500/(float)sampleRate,1,-3);
     smootherK = new Biquad(bq_type_lowpass, 500/(float)sampleRate,1,-3);
+     smootherL = new Biquad(bq_type_lowpass, 500/(float)sampleRate,1,-3);
+     smootherM = new Biquad(bq_type_lowpass, 500/(float)sampleRate,1,-3);
+     smootherN = new Biquad(bq_type_lowpass, 500/(float)sampleRate,1,-3);
+     smootherO = new Biquad(bq_type_lowpass, 500/(float)sampleRate,1,-3);
+     smootherP = new Biquad(bq_type_lowpass, 500/(float)sampleRate,1,-3);
+     smootherQ = new Biquad(bq_type_lowpass, 500/(float)sampleRate,1,-3);
+     smootherR = new Biquad(bq_type_lowpass, 500/(float)sampleRate,1,-3);
+     smootherS = new Biquad(bq_type_lowpass, 500/(float)sampleRate,1,-3);
+    smootherT = new Biquad(bq_type_lowpass, 1000/(float)sampleRate,1,-3);
+    HighPass = new Biquad(bq_type_highpass, 20/(float)sampleRate,1,-3);
+  
     knobA.setup();
     knobB.setup();
     knobC.setup();
@@ -63,14 +74,14 @@ void ofApp::setup(){
     knobE.setup();
     knobF.setup();
 
-    smooth.targetVal = 0;
-    smooth.lerp_object = new lerp(20 , sampleRate);
+
+ 
     autoPan.setup(1, 0, sampleRate, 1);
     vib.setup(1, 0, sampleRate, 1);
     vib2.setup(1, 0, sampleRate, 1);
     op1.setup(0,0,sampleRate, 1);
-    ADSR = new adsr(500,10,1,300,sampleRate);
-    ADSR_2 = new adsr(500,10,1,300,sampleRate);
+    ADSR = new adsr(0,10,0,30,sampleRate);
+    ADSR_2 = new adsr(0,10,0,30,sampleRate);
     env1.setup(300,550);
     env2.setup(300,680);
    // padA.setup(440);
@@ -107,7 +118,7 @@ void ofApp::draw(){
        if (noteOn ==true){
          ADSR->setGate(1);
          ADSR_2->setGate(1);
-           cNote = message.pitch;
+        
            
            queueDaddy.push_back(message.pitch);
           
@@ -171,8 +182,8 @@ void ofApp::draw(){
     
 
     ofPushMatrix();
-    env1.draw(1,1000,20,500,10,500);
-    env2.draw(1,1000,20,500,10,500);
+    env1.draw(10,1000,20,500,10,500);
+    env2.draw(10,1000,20,500,10,500);
     ofPopMatrix();
     // draw the left channel:
   
@@ -223,7 +234,7 @@ void ofApp::draw(){
     knobC.draw(150, 450, .2, .01);
     knobD.draw(450, 450, 12, 0);
     knobE.draw(300, 150, 10, 0);
-    knobF.draw(300, 450, 5, .01);
+    knobF.draw(300, 450, 1, .001);
     ofPopMatrix();
     
     t++;
@@ -253,7 +264,7 @@ void ofApp::draw(){
   
     op1.setFreq(smootherF->process((knobF.value)));
     
-    op1.setAmp(.4);
+    op1.setAmp(.5);
     
     autoPan.setFreq(smootherB->process(knobE.value));
     
@@ -267,23 +278,23 @@ void ofApp::draw(){
    
          
             if(queueDaddy.size()> 0){
-              osc[0].setFreq(mtofarray[queueDaddy[0]]);
-              osc[0].setAmp(smootherD->process(knobC.value));
+              osc.setFreq(mtofarray[queueDaddy[0]]);
+              osc.setAmp(smootherD->process(knobC.value));
             }
             
             if(queueDaddy.size()> 1){
-              oscB[0].setFreq(mtofarray[queueDaddy[1]]);
-              oscB[0].setAmp(smootherD->process(knobC.value));
+              oscB.setFreq(mtofarray[queueDaddy[1]]);
+              oscB.setAmp(smootherD->process(knobC.value));
             }
 //
             if(queueDaddy.size()> 2){
-              oscC[0].setFreq(mtofarray[queueDaddy[2]]);
-              oscC[0].setAmp(smootherD->process(knobC.value));
+              oscC.setFreq(mtofarray[queueDaddy[2]]);
+              oscC.setAmp(smootherD->process(knobC.value));
             }
 
             if(queueDaddy.size()> 3){
-              oscD[0].setFreq(mtofarray[queueDaddy[3]]);
-              oscD[0].setAmp(smootherD->process(knobC.value));
+              oscD.setFreq(mtofarray[queueDaddy[3]]);
+              oscD.setAmp(smootherD->process(knobC.value));
             }
 //
 //              oscB[k].setFreq(smootherG->process(mtofarray[voices[1]])*(k+round(knobD.value)));
@@ -371,26 +382,29 @@ void ofApp::audioOut(ofSoundBuffer & buffer){
         d_out1->setTime(smootherG->process(knobA.value));
         float currentS = 0;
 //        for(int j = 0; j < numOsc; j++){
-            currentS +=  osc[0].getSaw()
-                         + oscB[0].getSaw()
-                         + oscC[0].getSaw()
-                         + oscD[0].getSaw();
+            currentS += smootherT->process((osc.getSaw()
+                         + oscB.getSaw()
+                         + oscC.getSaw()
+                         + oscD.getSaw()) * op1.getSine());
 //                         * op1.getSine() * vib.getSine();
         
 //        }
         
        
 
-        ADSR->aTime = env1.attackV;
-        ADSR->dTime = env1.decayV;
-        ADSR->sTime = env1.susV;
-        ADSR->rTime = env1.relV;
+        ADSR->aTime = smootherL->process(env1.attackV);
+        ADSR->dTime = smootherM->process(env1.decayV);
+        ADSR->sTime = smootherN->process(env1.susV);
+        ADSR->rTime = smootherO->process(env1.relV);
+//        std::cout << env1.susV<<"env1.susV/n";
         
-        ADSR_2->aTime = env2.attackV;
-        ADSR_2->dTime = env2.decayV;
-        ADSR_2->sTime = env2.susV;
-        ADSR_2->rTime = env2.relV;
-    
+        ADSR_2->aTime = smootherP->process(env2.attackV);
+        ADSR_2->dTime = smootherQ->process(env2.decayV);
+        ADSR_2->sTime = smootherR->process(env2.susV);
+        ADSR_2->rTime = smootherS->process(env2.relV);
+//        std::cout << env2.susV<<"env2.susV/n";
+        
+        
         ADSR -> process();
         ADSR_2 -> process();
         
@@ -399,10 +413,11 @@ void ofApp::audioOut(ofSoundBuffer & buffer){
         float fRamp = ofMap(ADSR_2->getVal(), 0, 1, 10, 2000);
         filter->setFc(smoother->process(fRamp/float(sampleRate)+(knobB.value/float(sampleRate))));
         currentS = filter->process(currentS);
-        
+//        currentS = HighPass->process(currentS);
         float dOutSample = d_out1->getSample();
      
         d_in1->feed(currentS+(dOutSample*.7));
+        dOutSample = HighPass->process(dOutSample);
         
        
         currentPanFrame = pans.pan(currentS + dOutSample, autoPan.getSine());

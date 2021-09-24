@@ -130,7 +130,7 @@ void envui::draw(float aINmin, float aInmax, float dInmin, float dInmax, float r
     
     attackV = ofMap(p2x, xpos,xpos+50, aINmin, aInmax);
     decayV = ofMap(p3x, xpos+55,xpos+95, dInmin, dInmax);
-    susV = ofMap(p4x,xpos+115,xpos+170, .9, .1);
+    susV = ofMap(p4x,xpos+115,xpos+170, .9, .001);
     relV = ofMap(p5x, xpos+175,xpos+250, rInmin, rInmax);
     
 //    cout << p2x <<endl;

@@ -46,10 +46,10 @@ class ofApp : public ofBaseApp, public ofxMidiListener  {
     vector <float> lAudio;
     vector <float> rAudio;
     static const int numOsc = 12;
-    oscillator osc[numOsc];
-    oscillator oscB[numOsc];
-    oscillator oscC[numOsc];
-    oscillator oscD[numOsc];
+    oscillator osc;
+    oscillator oscB;
+    oscillator oscC;
+    oscillator oscD;
    
 
     vector <int> queueDaddy;
@@ -69,13 +69,24 @@ class ofApp : public ofBaseApp, public ofxMidiListener  {
     Biquad* smootherI;
     Biquad* smootherJ;
     Biquad* smootherK;
+    Biquad* smootherL;
+    Biquad* smootherM;
+    Biquad* smootherN;
+    Biquad* smootherO;
+    Biquad* smootherP;
+    Biquad* smootherQ;
+    Biquad* smootherR;
+    Biquad* smootherS;
+    Biquad* smootherT;
+    Biquad* HighPass;
+    
     bool noteOn =false;
     
     knob knobA, knobB, knobC, knobD, knobE, knobF, knobG;
     pad padA;
     Panner pans;
     
-    lerpVal smooth;
+    //lerpVal smooth;
     stereoFrame currentPanFrame;
     
     float t, ran;
